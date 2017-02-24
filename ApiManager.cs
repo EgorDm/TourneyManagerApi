@@ -89,10 +89,9 @@ namespace TournamentManagerApi
         /// <summary>
         /// Send a http GET api request
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="url"></param>
         /// <returns></returns>
-        public static ApiResponse<T> ApiCallGet<T>(string url) {
+        public static T ApiCallGetAbstract<T>(string url) where T : class {
             if (Token.IsExpired() && !RefreshToken(Token)) return null;
             //Build Request
             var webRequest = (HttpWebRequest)WebRequest.Create(url);
@@ -100,8 +99,18 @@ namespace TournamentManagerApi
             //Request
             var webResponse = (HttpWebResponse)webRequest.GetResponse();
             var respString = WebUtils.ResponseToString(webResponse);
-            var json = JsonConvert.DeserializeObject<ApiResponse<T>>(respString);
+            var json = JsonConvert.DeserializeObject<T>(respString);
             return json;
+        }
+
+        /// <summary>
+        /// Send a http GET api request
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static ApiResponse<T> ApiCallGet<T>(string url) {
+            return ApiCallGetAbstract<ApiResponse<T>>(url);
         }
 
         /// <summary>
